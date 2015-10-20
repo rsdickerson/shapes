@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+        <meta name="apple-touch-fullscreen" content="yes"/>
+        <meta name="msapplication-tap-highlight" content="no"/>
+        <link rel="stylesheet" href="css/style.css"/>
+        <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+        <script src="js/jquery.js"></script>
+        <script src="js/paper.js"></script>
+        <script src="js/codemirror.js"></script>
+        <script src="js/scripts.js"></script>
+        <script src="js/puzzle.js"></script>
+        <script>
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-10082945-6']);
+            _gaq.push(['_trackPageview']);
+            (function() {
+             var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+             ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+             })();
+            </script>
+        <title>Paper.js — Hit Testing</title>
+    </head>
+    <body class="fullscreen">
+        
+        <article><div class="paperscript">
+            
+            <script type="text/paperscript" canvas="canvas-1">
+            
+            var hitOptions = {
+                segments: true,
+                stroke: true,
+                fill: true,
+                tolerance: 5
+            };
+            
+            var selectedPath = null;
+            
+            createShapes();
+            
+            function createShapes() {
+                
+                var rectangle = new Rectangle(new Point(400, 200), new Size(400,400));
+                var cornerSize = new Size(10, 10);
+                var path = new Path.Rectangle(rectangle, cornerSize);
+                path.strokeColor = 'yellow';
+                path.fillColor = 'yellow'
+                
+                var target1 = new Path.Circle(new Point(600, 400), 150);
+                target1.fillColor = 'white';
+                
+                var layer = new Layer();
+                var shape1 = new Path.Circle(new Point(200, 200), 150);
+                shape1.fillColor = 'red';
+                
+                
+                
+            }
+           
+           var text = new PointText(new Point(20, 20));
+           text.justification = 'left';
+           text.fillColor = 'white';
+           text.content = 'The contents of the point text';
+           
+            function onMouseDown(event) {
+                text.content = 'onMouseDown @ ' + event.point.toString();
+                
+                var hitResult = project.hitTest(event.point, hitOptions);
+                
+                if (hitResult) {
+                    if (hitResult.item.layer == project.activeLayer && hitResult.item instanceof Path) {
+                        selectedPath = hitResult.item;
+                    }
+                }
+            }
+            
+            function onMouseUp(event) {
+                selectedPath = null;
+            }
+            
+            function onMouseMove(event) {
+                //text.content = 'onMouseMove @ ' + event.point.toString();
+            }
+            
+            function onMouseDrag(event) {
+                //text.content = 'onMouseDrag @ ' + event.point.toString();
+                if (selectedPath) {
+                    selectedPath.position += event.delta;
+                }
+            }
+            </script>
+            <div class="canvas">
+                <canvas resize="true" id="canvas-1" style="background:black"></canvas>
+            </div>
+        </div>
+        </article>
+    </body>
+</html>
