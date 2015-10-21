@@ -1,3 +1,4 @@
+// PUZZLE class ---------------
 
 Puzzle = function(name) {
     this.hitOptions = {
@@ -37,13 +38,11 @@ Puzzle.prototype.addPiece = function(piece) {
     this.baseLayer().addChild(basePath);
 }
 
-Puzzle.prototype.placePiece = function(piece) {
-    //basePath = piece.basePath();
-    //basePath.remove();
-    //path = piece.path();
-    //path.remove();
-    //this.baseLayer().addChild(path);
-    piece.placed = true;
+Puzzle.prototype.placeSelectedPiece = function() {
+    if (this.selectedPiece) {
+        this.selectedPiece.placed = true;
+        this.selectedPiece = null;
+    }
 }
 
 Puzzle.prototype.isSolved = function() {
@@ -55,6 +54,49 @@ Puzzle.prototype.isSolved = function() {
     }
     return true;
 }
+
+Puzzle.prototype.onMouseDown = function(event) {
+    var len = this.pieces.length;
+    for (var ndx=0; ndx < len; ndx++) {
+        if (!this.pieces[ndx].placed) {
+            var hitResult = this.pieces[ndx].path().hitTest(event.point, this.hitOptions);
+            if (hitResult) {
+                this.selectedPiece = this.pieces[ndx];
+                break;
+            }
+        }
+    }
+}
+
+Puzzle.prototype.onMouseUp = function(event) {
+    this.selectedPiece = null;
+}
+
+Puzzle.prototype.onMouseMove = function(event) {
+}
+
+Puzzle.prototype.onMouseDrag = function(event) {
+    if (this.selectedPiece) {
+        path = this.selectedPiece.path();
+        path.translate(event.delta);
+        if (this.selectedPiece.isAtBase()) {
+            this.selectedPiece.snapPieceToBase();
+            this.placeSelectedPiece();
+            if (this.isSolved()) {
+                background = project.layers[0].children[0];
+                background.style = {
+                fillColor: 'white',
+                strokeColor: 'green',
+                strokeWidth: 10
+                };
+            }
+        }
+    }
+    
+}
+
+
+// PUZZLE PIECE class -----------------
 
 PuzzlePiece = function(path, basePath) {
     this.pathId = path.id;
