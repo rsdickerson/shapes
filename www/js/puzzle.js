@@ -11,10 +11,10 @@ Puzzle = function(name) {
     this.pieces = new Array();
     this.selectedPiece = null;
 
-    baseLayer = new Layer();
+    baseLayer = new paper.Layer();
     this.baseLayerId = baseLayer.id;
     
-    pieceLayer = new Layer();
+    pieceLayer = new paper.Layer();
     this.pieceLayerId = pieceLayer.id;
 }
 
@@ -76,7 +76,7 @@ Puzzle.prototype.onMouseMove = function(event) {
 }
 
 Puzzle.prototype.onMouseDrag = function(event) {
-    if (this.selectedPiece) {
+    if (this.selectedPiece && this.selectedPiece.inView(event)) {
         path = this.selectedPiece.path();
         path.translate(event.delta);
         if (this.selectedPiece.isAtBase()) {
@@ -124,6 +124,28 @@ PuzzlePiece.prototype.snapPieceToBase = function() {
     path = this.path();
     basePath = this.basePath();
     path.translate(basePath.position.subtract(path.position));
+}
+
+PuzzlePiece.prototype.inView = function(event) {
+    path = this.path();
+
+    p = path.bounds.topLeft;
+    np = new Point(p.x+event.delta.x, p.y+event.delta.y);
+    if (!view.bounds.contains(np)) return false;
+
+    p = path.bounds.topRight;
+    np = new Point(p.x+event.delta.x, p.y+event.delta.y);
+    if (!view.bounds.contains(np)) return false;
+    
+    p = path.bounds.bottomLeft;
+    np = new Point(p.x+event.delta.x, p.y+event.delta.y);
+    if (!view.bounds.contains(np)) return false;
+    
+    p = path.bounds.bottomRight;
+    np = new Point(p.x+event.delta.x, p.y+event.delta.y);
+    if (!view.bounds.contains(np)) return false;
+    
+    return true;
 }
 
 

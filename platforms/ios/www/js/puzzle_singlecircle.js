@@ -7,78 +7,69 @@
     
     window.onload = function() {
         
+        gray = new Color(0.5);
+        wood = '#f6e8c3';
+        medwood = '#f8f0d8';
+        lightwood = '#fcf8ee';
+ 
+ var canvasSize = this.view.size;
+ var maxSize = Math.min(canvasSize.width, canvasSize.height);
+ var center = this.view.center;
+ 
         background = new Shape.Rectangle(view.bounds);
-        background.fillColor = 'green';
-        background.strokeColor = 'red';
-        background.strokeWidth = 5;
+        background.fillColor = 'white';
+        background.strokeColor = gray;
+        background.strokeWidth = 10;
         
         var artLayer = new Layer();
-        
-        var rectangle = new Rectangle(new Point(400, 200), new Size(400,400));
-        var cornerSize = new Size(10, 10);
-        var path = new Path.Rectangle(rectangle, cornerSize);
-        path.strokeColor = 'yellow';
-        path.fillColor = 'yellow'
+ 
+ var recRatio = 0.45;
+ var cornerRatio = 0.05;
+ var circleRatio = 0.4;
+ var knobRatio = circleRatio * 0.5;
+ 
+ var recSize = maxSize * recRatio;
+ var cornerSize = recSize * cornerRatio;
+ 
+        var topLeftCorner = center.subtract(recSize * 0.5, recSize * 0.5);
+        var rectangle = new Rectangle(topLeftCorner, new Size(recSize,recSize));
+        var path = new Path.Rectangle(rectangle, new Size(cornerSize, cornerSize));
+        path.strokeColor = medwood;
+        path.strokeWidth = 3;
+        path.fillColor = wood;
         
         
         var puzzle = new Puzzle();
+ 
+ var circleRadius = maxSize * circleRatio * 0.5;
+ var knobRadius = circleRadius * knobRatio;
+ 
+        var base = new Path.Circle(center, circleRadius);
+        base.fillColor = lightwood;
+        base.strokeWidth = 3;
+        base.strokeColor = medwood;
         
-        var base = new Path.Circle(new Point(600, 400), 150);
-        base.fillColor = 'white';
+ var pieceCenter = new Point(circleRadius + 10, circleRadius + 10);
+        var path = new Path.Circle(pieceCenter, circleRadius);
+        path.fillColor = 'blue';
+        path.strokeWidth = 3;
+        path.strokeColor = 'blue';
+        path.strokeColor.alpha = 0.5;
         
-        var path = new Path.Circle(new Point(200, 200), 150);
-        path.fillColor = 'red';
+        var knob = new Path.Circle(pieceCenter, knobRadius);
+        knob.fillColor = medwood;
+        knob.strokeWidth = 5;
+        knob.strokeColor = lightwood;
         
-        //point = new Point(100,0);
-        //path.translate(point);
+        piece = new Group([path, knob]);
         
-        puzzle.addPiece(new PuzzlePiece(path, base));
+        puzzle.addPiece(new PuzzlePiece(piece, base));
         
         var tool = new Tool();
-        
-        tool.onMouseDown = function(event) {
-            var hitResult = project.hitTest(event.point, puzzle.hitOptions);
-            
-            if (hitResult) {
-                if (hitResult.item instanceof Path) {
-                    path = hitResult.item;
-                    var len = puzzle.pieces.length;
-                    for (var ndx=0; ndx < len; ndx++) {
-                        if (puzzle.pieces[ndx].pathId == path.id && !puzzle.pieces[ndx].placed) {
-                            puzzle.selectedPiece = puzzle.pieces[ndx];
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        
-        tool.onMouseUp = function(event) {
-            puzzle.selectedPiece = null;
-        }
-        
-        tool.onMouseMove = function(event) {
-        }
-        
-        tool.onMouseDrag = function(event) {
-            if (puzzle.selectedPiece) {
-                path = puzzle.selectedPiece.path();
-                path.translate(event.delta);
-                if (puzzle.selectedPiece.isAtBase()) {
-                    puzzle.selectedPiece.snapPieceToBase();
-                    puzzle.placePiece(puzzle.selectedPiece);
-                    if (puzzle.isSolved()) {
-                        background = project.layers[0].children[0];
-                        background.style = {
-                        fillColor: 'blue',
-                        strokeColor: 'red',
-                        strokeWidth: 5
-                        };
-                    }
-                }
-            }
-            
-        }
+        tool.onMouseDown = function(event) { puzzle.onMouseDown(event); }
+        tool.onMouseUp   = function(event) { puzzle.onMouseUp(event); }
+        tool.onMouseMove = function(event) { puzzle.onMouseMove(event); }
+        tool.onMouseDrag = function(event) { puzzle.onMouseDrag(event); }
         
         view.update();
     }
