@@ -76,7 +76,11 @@ Puzzle.prototype.onMouseMove = function(event) {
 }
 
 Puzzle.prototype.onMouseDrag = function(event) {
-    if (this.selectedPiece && this.selectedPiece.inView(event)) {
+    if (this.selectedPiece) {
+        if (!this.selectedPiece.inView(event)) {
+            this.selectedPiece = null;
+            return;
+        }
         path = this.selectedPiece.path();
         path.translate(event.delta);
         if (this.selectedPiece.isAtBase()) {
