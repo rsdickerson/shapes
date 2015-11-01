@@ -24,7 +24,7 @@
         
         var navbar = new Navbar();
         navbar.prevArrowOnClick = function(event) {
-            window.location = "/threeCircles.html";
+            window.location = "/fiveCircles.html";
         }
         navbar.nextArrowOnClick = function(event) {
             window.location = "/singleSquare.html";

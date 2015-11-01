@@ -26,7 +26,7 @@
             window.location = "/singleTriangle.html";
         }
         navbar.nextArrowOnClick = function(event) {
-            window.location = "/singleCircle.html";
+            window.location = "/fiveCircles.html";
         }
         navbar.draw();
         
